@@ -83,19 +83,16 @@ public class ExampleInstrumentedTest {
             service.getMyKeyPair();
         }
         PublicKey myPublicKey = service.getMyKeyPair().getPublic();
-        PrivateKey myPrivatekey = service.getMyKeyPair().getPrivate();
+        PrivateKey myPrivateKey = service.getMyKeyPair().getPrivate();
 
         String sampleText = "This is an awesome chat app!";
 
         Cipher c = Cipher.getInstance("RSA");
         c.init(Cipher.ENCRYPT_MODE, myPublicKey);
-        c.update(sampleText.getBytes());
-        byte[] encryptedText = c.doFinal();
+        byte[] encryptedText= c.doFinal(sampleText.getBytes());
 
-        c.init(Cipher.DECRYPT_MODE, myPrivatekey);
-        c.update(encryptedText);
-        byte[] decryptedText = c.doFinal();
-        String actualText = decryptedText.toString();
+        c.init(Cipher.DECRYPT_MODE, myPrivateKey);
+        String actualText = new String(c.doFinal(encryptedText));
 
         assertEquals(sampleText, actualText);
 
