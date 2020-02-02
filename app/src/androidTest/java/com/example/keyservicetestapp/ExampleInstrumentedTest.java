@@ -50,7 +50,7 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void CreatedPubKeyandReturnedPubKeyFromSharePrefValid() {
+    public void CreatedPubKeyandReturnedPubKeyFromSharePrefValid() throws NoSuchAlgorithmException {
         service.resetMyKeyPair();
         //-----------------------------ADD TEST FOR SERVICE FROM HERE-------------------------------
         KeyPair key = service.getMyKeyPair();
@@ -63,7 +63,7 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void CreatedPriKeyandReturnedPriKeyFromSharePrefValid() {
+    public void CreatedPriKeyandReturnedPriKeyFromSharePrefValid() throws NoSuchAlgorithmException {
         //-----------------------------ADD TEST FOR SERVICE FROM HERE-------------------------------
         KeyPair key = service.getMyKeyPair();
         if (null == key) {

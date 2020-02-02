@@ -19,12 +19,10 @@ import java.util.Base64;
 
 public class KeyService extends Service {
     private final IBinder myBinder = new MyBinder();
-    KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
     private KeyPair myKeyPair;
     private SharedPreferences sharePref;
     PublicKey myPublicKey;
     PrivateKey myPrivateKey;
-    private KeyFactory kf = KeyFactory.getInstance("RSA");
 
     public KeyService() throws NoSuchAlgorithmException {
     }
@@ -38,6 +36,12 @@ public class KeyService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         sharePref = PreferenceManager.getDefaultSharedPreferences(this);
+        KeyFactory kf = null;
+        try {
+            kf = KeyFactory.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
         if (null != sharePref) {
             //Retrieve Key Pair
             String publicKey = sharePref.getString(getString(R.string.my_public_key), null);
@@ -66,7 +70,8 @@ public class KeyService extends Service {
         return myBinder;
     }
 
-    public KeyPair getMyKeyPair() {
+    public KeyPair getMyKeyPair() throws NoSuchAlgorithmException {
+        KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
         keygen.initialize(2048);
         if (null == myKeyPair){
             myKeyPair = keygen.generateKeyPair();
