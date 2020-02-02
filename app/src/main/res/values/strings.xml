@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">KeyServiceTestApp</string>
+    <string name="my_public_key">mypublic</string>
+    <string name="my_private_key">myprivate</string>
 </resources>

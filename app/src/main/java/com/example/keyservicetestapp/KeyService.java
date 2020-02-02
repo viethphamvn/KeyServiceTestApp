@@ -40,8 +40,8 @@ public class KeyService extends Service {
         sharePref = PreferenceManager.getDefaultSharedPreferences(this);
         if (null != sharePref) {
             //Retrieve Key Pair
-            String publicKey = sharePref.getString("mypublic", null);
-            String privateKey = sharePref.getString("myprivate", null);
+            String publicKey = sharePref.getString(getString(R.string.my_public_key), null);
+            String privateKey = sharePref.getString(getString(R.string.my_private_key), null);
             if (null != publicKey) {
                 //-----Retrieve Public Key
                 byte[] publicBytes = Base64.getDecoder().decode(publicKey.getBytes());
@@ -71,8 +71,8 @@ public class KeyService extends Service {
         if (null == myKeyPair){
             myKeyPair = keygen.generateKeyPair();
             SharedPreferences.Editor editor = sharePref.edit();
-            editor.putString("mypublic",Base64.getEncoder().encodeToString(myKeyPair.getPublic().getEncoded()));
-            editor.putString("myprivate",Base64.getEncoder().encodeToString(myKeyPair.getPrivate().getEncoded()));
+            editor.putString(getString(R.string.my_public_key),Base64.getEncoder().encodeToString(myKeyPair.getPublic().getEncoded()));
+            editor.putString(getString(R.string.my_private_key),Base64.getEncoder().encodeToString(myKeyPair.getPrivate().getEncoded()));
             editor.commit();
             return null;
         } else {
@@ -100,17 +100,17 @@ public class KeyService extends Service {
     }
 
     public String returnMyPublicKeyFromSharePref(){
-        return sharePref.getString("mypublic",null);
+        return sharePref.getString(getString(R.string.my_public_key),null);
     }
 
     public String returnMyPrivateKeyFromSharePref(){
-        return sharePref.getString("myprivate",null);
+        return sharePref.getString(getString(R.string.my_private_key),null);
     }
 
     public void resetMyKeyPair() {
         SharedPreferences.Editor editor = sharePref.edit();
-        editor.remove("mypublic");
-        editor.remove("myprivate");
+        editor.remove(getString(R.string.my_public_key));
+        editor.remove(getString(R.string.my_private_key));
         editor.apply();
         myKeyPair = null;
     }
