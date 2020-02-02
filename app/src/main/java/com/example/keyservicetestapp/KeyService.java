@@ -1,34 +1,21 @@
 package com.example.keyservicetestapp;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
-import java.io.IOException;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 public class KeyService extends Service {
     private final IBinder myBinder = new MyBinder();
@@ -39,7 +26,7 @@ public class KeyService extends Service {
     PrivateKey myPrivateKey;
     private KeyFactory kf = KeyFactory.getInstance("RSA");
 
-    public KeyService() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public KeyService() throws NoSuchAlgorithmException {
     }
 
     public class MyBinder extends Binder {
@@ -57,7 +44,7 @@ public class KeyService extends Service {
             String privateKey = sharePref.getString("myprivate", null);
             if (null != publicKey) {
                 //-----Retrieve Public Key
-                byte[] publicBytes = Base64.getDecoder().decode(publicKey);
+                byte[] publicBytes = Base64.getDecoder().decode(publicKey.getBytes());
                 X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
                 try {
                     myPublicKey = kf.generatePublic(keySpec);
@@ -65,7 +52,7 @@ public class KeyService extends Service {
                     e.printStackTrace();
                 }
                 //-----Retrieve Private Key
-                byte[] privateBytes = Base64.getDecoder().decode(privateKey);
+                byte[] privateBytes = Base64.getDecoder().decode(privateKey.getBytes());
                 keySpec = new X509EncodedKeySpec(privateBytes);
                 try {
                     myPrivateKey = kf.generatePrivate(keySpec);
@@ -99,12 +86,13 @@ public class KeyService extends Service {
         editor.commit();
     }
 
-    public RSAPublicKey getPublicKey(String partnerName) throws InvalidKeySpecException {
+    public RSAPublicKey getPublicKey(String partnerName) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String publicKey = sharePref.getString(partnerName, null);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         if (null != publicKey){
             byte[] publicBytes = Base64.getDecoder().decode(publicKey);
             X509EncodedKeySpec keyspec = new X509EncodedKeySpec(publicBytes);
-            RSAPublicKey key = (RSAPublicKey) kf.generatePublic(keyspec);
+            RSAPublicKey key = key = (RSAPublicKey) keyFactory.generatePublic(keyspec);
             return key;
         } else {
             return null;

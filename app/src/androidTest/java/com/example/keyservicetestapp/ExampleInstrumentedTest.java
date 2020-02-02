@@ -3,6 +3,7 @@ package com.example.keyservicetestapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -15,18 +16,22 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.concurrent.TimeoutException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 
 import static org.junit.Assert.*;
@@ -97,4 +102,28 @@ public class ExampleInstrumentedTest {
         assertEquals(sampleText, actualText);
 
     }
+
+    @Test
+    public void StoreAndRetrievePartnerKeyValid_1() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        service.resetKey("Lee Mai");
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        KeyPair key = keyPairGenerator.generateKeyPair();
+        PublicKey partnerOneKey = key.getPublic();
+
+        service.storePublicKey("Lee Mai", Base64.getEncoder().encodeToString(partnerOneKey.getEncoded()));
+
+        assertEquals(partnerOneKey, service.getPublicKey("Lee Mai"));
+    }
+
+    @Test
+    public void StoreAndRetrievePartnerKeyValid_2() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        service.resetKey("Elliott Fix");
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        String partnerTwoKey = Base64.getEncoder().encodeToString(keyPairGenerator.generateKeyPair().getPublic().getEncoded());
+        service.storePublicKey("Elliott Fix", partnerTwoKey);
+
+        assertEquals(partnerTwoKey, Base64.getEncoder().encodeToString(service.getPublicKey("Elliott Fix").getEncoded()));
+
+    }
+
 }
