@@ -97,7 +97,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void StoreAndRetrievePartnerKeyValid_1() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String personName = "Lee Mai";
+        String personName = "Elliott Fix";
         service.resetKey(personName);
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         KeyPair key = keyPairGenerator.generateKeyPair();
@@ -106,17 +106,20 @@ public class ExampleInstrumentedTest {
         service.storePublicKey(personName, Base64.getEncoder().encodeToString(partnerOneKey.getEncoded()));
 
         assertEquals(partnerOneKey, service.getPublicKey(personName));
+        service.resetKey(personName);
     }
 
     @Test
     public void StoreAndRetrievePartnerKeyValid_2() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String personName = "Elliott Fix";
+        String personName = "Lee Mai";
         service.resetKey(personName);
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         String partnerTwoKey = Base64.getEncoder().encodeToString(keyPairGenerator.generateKeyPair().getPublic().getEncoded());
         service.storePublicKey(personName, partnerTwoKey);
 
         assertEquals(partnerTwoKey, Base64.getEncoder().encodeToString(service.getPublicKey(personName).getEncoded()));
+        service.resetKey(personName);
+
 
     }
 
