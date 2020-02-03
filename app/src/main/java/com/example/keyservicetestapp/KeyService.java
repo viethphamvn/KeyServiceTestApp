@@ -24,10 +24,11 @@ public class KeyService extends Service {
     PublicKey myPublicKey;
     PrivateKey myPrivateKey;
 
-    public KeyService() throws NoSuchAlgorithmException {
+    public KeyService() {
     }
 
     public class MyBinder extends Binder {
+        //return binder
         KeyService getService(){
             return KeyService.this;
         }
@@ -43,11 +44,11 @@ public class KeyService extends Service {
             e.printStackTrace();
         }
         if (null != sharePref) {
-            //Retrieve Key Pair
+            //Try to retrieve Key Pair from SharePreferences if exists
             String publicKey = sharePref.getString(getString(R.string.my_public_key), null);
             String privateKey = sharePref.getString(getString(R.string.my_private_key), null);
             if (null != publicKey) {
-                //-----Retrieve Public Key
+                //-----Convert String Public Key to PublicKey
                 byte[] publicBytes = Base64.getDecoder().decode(publicKey.getBytes());
                 X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
                 try {
@@ -55,7 +56,7 @@ public class KeyService extends Service {
                 } catch (InvalidKeySpecException e) {
                     e.printStackTrace();
                 }
-                //-----Retrieve Private Key
+                //-----Convert String Private Key to PrivateKey
                 byte[] privateBytes = Base64.getDecoder().decode(privateKey.getBytes());
                 keySpec = new X509EncodedKeySpec(privateBytes);
                 try {
@@ -86,18 +87,25 @@ public class KeyService extends Service {
     }
 
     public void storePublicKey(String partnerName, String publicKey){
-        SharedPreferences.Editor editor = sharePref.edit();
-        editor.putString(partnerName, publicKey);
-        editor.commit();
+        //Store key to SharePreferences
+        try {
+            SharedPreferences.Editor editor = sharePref.edit();
+            editor.putString(partnerName, publicKey);
+            editor.commit();
+        } catch (NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     public RSAPublicKey getPublicKey(String partnerName) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        //Try to retrieve key from SharePreferences if exists
         String publicKey = sharePref.getString(partnerName, null);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         if (null != publicKey){
+            //Convert String key to RSAPublicKey
             byte[] publicBytes = Base64.getDecoder().decode(publicKey);
-            X509EncodedKeySpec keyspec = new X509EncodedKeySpec(publicBytes);
-            RSAPublicKey key = key = (RSAPublicKey) keyFactory.generatePublic(keyspec);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+            RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(keySpec);
             return key;
         } else {
             return null;
@@ -118,6 +126,8 @@ public class KeyService extends Service {
         editor.remove(getString(R.string.my_private_key));
         editor.apply();
         myKeyPair = null;
+        myPublicKey = null;
+        myPrivateKey = null;
     }
 
     public void resetKey(String partnerName){

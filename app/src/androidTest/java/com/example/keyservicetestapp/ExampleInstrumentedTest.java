@@ -97,24 +97,26 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void StoreAndRetrievePartnerKeyValid_1() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        service.resetKey("Lee Mai");
+        String personName = "Lee Mai";
+        service.resetKey(personName);
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         KeyPair key = keyPairGenerator.generateKeyPair();
         PublicKey partnerOneKey = key.getPublic();
 
-        service.storePublicKey("Lee Mai", Base64.getEncoder().encodeToString(partnerOneKey.getEncoded()));
+        service.storePublicKey(personName, Base64.getEncoder().encodeToString(partnerOneKey.getEncoded()));
 
-        assertEquals(partnerOneKey, service.getPublicKey("Lee Mai"));
+        assertEquals(partnerOneKey, service.getPublicKey(personName));
     }
 
     @Test
     public void StoreAndRetrievePartnerKeyValid_2() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        service.resetKey("Elliott Fix");
+        String personName = "Elliott Fix";
+        service.resetKey(personName);
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         String partnerTwoKey = Base64.getEncoder().encodeToString(keyPairGenerator.generateKeyPair().getPublic().getEncoded());
-        service.storePublicKey("Elliott Fix", partnerTwoKey);
+        service.storePublicKey(personName, partnerTwoKey);
 
-        assertEquals(partnerTwoKey, Base64.getEncoder().encodeToString(service.getPublicKey("Elliott Fix").getEncoded()));
+        assertEquals(partnerTwoKey, Base64.getEncoder().encodeToString(service.getPublicKey(personName).getEncoded()));
 
     }
 
